@@ -9,18 +9,44 @@ const gallery = document.getElementById('gallery');
 const modal = document.getElementById('photoModal');
 const modalImg = document.getElementById('modalImg');
 const downloadLink = document.getElementById('downloadLink');
+const shareBtn = document.getElementById('shareBtn');
 
-// Function para buksan ang picture
+let currentImageUrl = "";
+
+// Buksan ang Photo at i-setup ang Buttons
 function openPhoto(fullUrl, downloadUrl) {
+    currentImageUrl = fullUrl;
     modalImg.src = fullUrl;
     downloadLink.href = downloadUrl;
     modal.style.display = "flex";
 }
 
-// Function para isara ang modal
+// Isara ang Modal
 function closeModal() {
     modal.style.display = "none";
 }
+
+// Isara kapag clinick ang labas ng picture
+window.onclick = (event) => {
+    if (event.target == modal) closeModal();
+};
+
+// Share Functionality (Web Share API)
+shareBtn.onclick = async () => {
+    if (navigator.share) {
+        try {
+            await navigator.share({
+                title: 'My Justpose Photo',
+                text: 'Check out my photo from the booth!',
+                url: currentImageUrl,
+            });
+        } catch (err) {
+            console.log("Share cancelled or failed");
+        }
+    } else {
+        alert("Sharing not supported on this browser. Try downloading the photo instead!");
+    }
+};
 
 if (searchTag) {
     fetch(`https://res.cloudinary.com/${cloudName}/image/list/${searchTag}.json`)
@@ -31,6 +57,7 @@ if (searchTag) {
         .then(data => {
             gallery.innerHTML = ""; 
             
+            // Latest photos sa itaas
             data.resources.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
 
             data.resources.forEach(img => {
@@ -40,10 +67,7 @@ if (searchTag) {
                 
                 const wrapper = document.createElement('div');
                 wrapper.className = "img-card";
-                
-                // Onclick event para lumaki ang photo
                 wrapper.onclick = () => openPhoto(fullViewUrl, downloadUrl);
-
                 wrapper.innerHTML = `<img src="${thumbUrl}" alt="Photo">`;
                 
                 gallery.appendChild(wrapper);
