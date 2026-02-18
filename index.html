@@ -13,43 +13,48 @@
             margin: 0; padding: 15px;
         }
         header { text-align: center; padding: 20px 0; border-bottom: 1px solid #222; margin-bottom: 20px; }
-        header h1 { margin: 0; font-size: 1.5rem; letter-spacing: 2px; color: #fff; }
+        header h1 { margin: 0; font-size: 1.2rem; letter-spacing: 2px; color: #fff; }
         
         /* Grid Layout */
         #gallery { 
             display: grid; 
-            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); 
-            gap: 15px; 
+            grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); 
+            gap: 10px; 
         }
         
-        /* Card Style */
+        /* Card Style - No button here anymore */
         .img-card { 
             background: #1a1a1a; 
-            border-radius: 12px; 
+            border-radius: 8px; 
             overflow: hidden; 
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-            display: flex;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .img-card:active { transform: scale(0.95); }
+        .img-card img { width: 100%; height: 150px; object-fit: cover; display: block; }
+
+        /* Modal / Pop-up Style */
+        #photoModal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95);
             flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
-        .img-card img { 
-            width: 100%; 
-            height: auto; 
-            display: block;
-            border-bottom: 1px solid #222;
-        }
+        #modalImg { max-width: 90%; max-height: 70%; border-radius: 10px; box-shadow: 0 0 20px rgba(255,255,255,0.1); }
         
-        /* Download Button */
-        .download-btn {
-            background: #fff;
-            color: #000;
-            text-decoration: none;
-            text-align: center;
-            padding: 10px;
-            font-size: 0.8rem;
-            font-weight: bold;
-            transition: 0.3s;
+        .modal-controls { margin-top: 20px; display: flex; gap: 15px; width: 90%; justify-content: center; }
+        
+        .download-btn-large {
+            background: #fff; color: #000;
+            padding: 12px 25px; border-radius: 30px;
+            text-decoration: none; font-weight: bold; font-size: 1rem;
         }
-        .download-btn:active { background: #ccc; }
+        .close-btn { color: #888; background: none; border: none; font-size: 1rem; cursor: pointer; }
 
         .msg { grid-column: 1 / -1; text-align: center; padding: 50px; color: #555; }
     </style>
@@ -62,6 +67,14 @@
     
     <div id="gallery">
         <div class="msg">Loading photos...</div>
+    </div>
+
+    <div id="photoModal">
+        <img id="modalImg" src="" alt="Full View">
+        <div class="modal-controls">
+            <a id="downloadLink" href="#" class="download-btn-large">DOWNLOAD PHOTO</a>
+        </div>
+        <button class="close-btn" onclick="closeModal()">Close</button>
     </div>
 
     <script src="script.js"></script>
