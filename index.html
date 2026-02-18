@@ -3,78 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Justpose Studio | v43</title>
+    <title>Justpose Studio | Pro v31</title>
     <script src="https://product-gallery.cloudinary.com/all.js" type="text/javascript"></script>
     <style>
         :root { --accent: #00f2ff; }
-        body { 
-            background-color: #000; 
-            color: #fff; 
-            font-family: 'Segoe UI', sans-serif; 
-            margin: 0; padding: 0; 
-            display: flex; flex-direction: column; align-items: center;
-        }
-        
-        .header { 
-            padding: 60px 0 20px 0; 
-            width: 100%; 
-            text-align: center;
-            background: linear-gradient(to bottom, #0a0a0a, #000);
-        }
-        h1 { 
-            margin: 0; 
-            font-size: 2.2rem; 
-            letter-spacing: 8px; 
-            color: var(--accent);
-            text-shadow: 0 0 15px rgba(0, 242, 255, 0.5);
-        }
-
-        #media-container {
-            width: 90%;
-            max-width: 500px;
-            margin-top: 20px;
-        }
-
-        .instruction {
-            color: #444;
-            font-size: 0.8rem;
-            margin: 20px 0;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
+        body { background: #000; color: white; font-family: 'Segoe UI', sans-serif; margin: 0; }
+        .header { padding: 15px; border-bottom: 1px solid #111; background: #000; text-align: center; }
+        h1 { margin: 0; font-size: 1.1rem; color: var(--accent); letter-spacing: 3px; }
+        #gallery-container { width: 100%; max-width: 500px; margin: 0 auto; }
+        /* FORCE REMOVE ALL BORDERS */
+        .pg-base, .pg-item, .pg-wrapper { background: #000 !important; border: none !important; box-shadow: none !important; padding: 0 !important; }
+        .pg-zoom-close-btn { background: var(--accent) !important; color: #000 !important; border-radius: 50%; }
     </style>
 </head>
 <body>
     <div class="header"><h1>JUSTPOSE STUDIO</h1></div>
-    <div class="instruction">Tap media to download</div>
-
-    <div id="media-container">
-        <div id="my-gallery"></div>
-    </div>
-
+    <div id="gallery-container"><div id="my-gallery"></div></div>
     <script type="text/javascript">
-        const params = new URLSearchParams(window.location.search);
-        const sessId = params.get('id');
-
-        if (sessId) {
+        const tag = new URLSearchParams(window.location.search).get('id');
+        if (tag) {
             cloudinary.galleryWidget({
                 container: "#my-gallery",
                 cloudName: "dntrwkexp",
-                mediaAssets: [
-                    // DIRECT PATH LOADING
-                    { publicId: `Events/${sessId}/1_Print`, mediaType: "image" },
-                    { publicId: `Events/${sessId}/Final_Video`, mediaType: "video" }
-                ],
-                displayProps: { mode: "classic", columns: 1, spacing: 15 },
+                mediaAssets: [{ tag: tag }],
+                displayProps: { mode: "classic", columns: 1, spacing: 0 },
+                zoomProps: { type: "popup" },
                 aspectRatio: "1:1",
-                zoomProps: { type: "popup", viewer: "full" },
-                styles: {
-                    palette: {
-                        primary: "#00f2ff",
-                        active: "#ffffff",
-                        background: "#000000"
-                    }
-                }
+                styles: { palette: { primary: "#00f2ff", active: "#ffffff" } }
             }).render();
         }
     </script>
