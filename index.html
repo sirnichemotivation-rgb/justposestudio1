@@ -3,30 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Justpose Studio | v40</title>
+    <title>Justpose Studio | v42</title>
     <script src="https://product-gallery.cloudinary.com/all.js" type="text/javascript"></script>
     <style>
         :root { --accent: #00f2ff; }
         body { background: #000; color: white; font-family: sans-serif; margin: 0; padding: 0; }
-        
-        /* PINALAKI AT IBINABA PA PARA SIGURADONG KITANG-KITA */
-        .header { padding: 80px 10px 30px 10px; text-align: center; }
-        h1 { margin: 0; font-size: 3rem; color: var(--accent); letter-spacing: 12px; text-shadow: 0 0 20px var(--accent); }
-        
-        .download-btn {
-            display: block; width: 200px; margin: 20px auto; padding: 15px;
-            background: var(--accent); color: #000; text-align: center;
-            font-weight: bold; text-decoration: none; border-radius: 50px;
-        }
-
-        #gallery-container { width: 100%; max-width: 500px; margin: 0 auto; }
+        .header { padding: 60px 10px 20px 10px; text-align: center; }
+        h1 { margin: 0; font-size: 2.5rem; color: var(--accent); letter-spacing: 10px; }
+        #gallery-container { width: 100%; max-width: 500px; margin: 0 auto; min-height: 500px; }
     </style>
 </head>
 <body>
     <div class="header"><h1>JUSTPOSE STUDIO</h1></div>
-    
-    <p style="text-align:center; color:#888;">Tap image to view. Long press to Save.</p>
-
     <div id="gallery-container"><div id="my-gallery"></div></div>
 
     <script type="text/javascript">
@@ -35,12 +23,14 @@
             cloudinary.galleryWidget({
                 container: "#my-gallery",
                 cloudName: "dntrwkexp",
-                mediaAssets: [{ tag: tag, mediaType: "all" }],
+                mediaAssets: [
+                    { tag: tag, mediaType: "image" }, // Hanapin lahat ng Images na may tag
+                    { tag: tag, mediaType: "video" }  // Hanapin lahat ng Videos na may tag
+                ],
                 displayProps: { mode: "classic", columns: 1, spacing: 10 },
                 aspectRatio: "1:1",
-                // PINABABA ANG QUALITY PARA MAKAPAG-SAVE NG BANDWIDTH
-                transformation: { quality: "auto:eco", width: 1000, crop: "limit" },
-                zoomProps: { type: "popup" }
+                zoomProps: { type: "popup" },
+                transformation: { quality: "auto", fetch_format: "auto" }
             }).render();
         }
     </script>
