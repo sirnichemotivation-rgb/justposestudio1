@@ -1,75 +1,77 @@
-const video = document.getElementById('video');
-const canvas = document.getElementById('canvas');
-const context = canvas.getContext('2d');
+const CONFIG = {
+    cloudName: "dntrwkexp",
+    thumbQuality: "q_auto,f_auto,w_500",
+    fullQuality: "q_auto,f_auto"
+};
 
-// 1. Buksan ang Camera pagka-load ng page
-navigator.mediaDevices.getUserMedia({ video: true })
-    .then(stream => {
-        video.srcObject = stream;
-    })
-    .catch(err => {
-        console.error("Error accessing camera: ", err);
-        alert("Hindi mahanap ang camera.");
-    });
+const urlParams = new URLSearchParams(window.location.search);
+const eventId = urlParams.get('event');
+const gallery = document.getElementById('gallery');
+const modal = document.getElementById('photoModal');
+const modalContent = document.getElementById('modalContent');
 
-// 2. MAIN FUNCTION: Single Shot & Print
-async function takeShotAndPrint() {
-    // I-set ang canvas size sa laki ng video
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-    
-    // Kunin ang image mula sa video feed
-    context.drawImage(video, 0, 0, canvas.width, canvas.height);
-    
-    // I-convert ang image sa Base64 format
-    const imageData = canvas.toDataURL('image/jpeg');
+// 1. LOAD MAIN PRINTS (Wall view)
+if (eventId) {
+    // Tinatawag ang Cloudinary list API base sa Event ID
+    fetch(`https://res.cloudinary.com/${CONFIG.cloudName}/image/list/${eventId}.json`)
+        .then(res => res.json())
+        .then(data => {
+            gallery.innerHTML = "";
+            
+            // I-filter para ang lalabas lang sa main wall ay yung "1_Print" collage
+            const mainPrints = data.resources.filter(img => img.public_id.includes('1_Print'));
+            
+            // Sort by latest created
+            mainPrints.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
 
-    console.log("Capturing photo...");
+            mainPrints.forEach(img => {
+                const parts = img.public_id.split('/');
+                const sessId = parts[parts.length - 2]; // Kinukuha ang Session ID
+
+                const thumbUrl = `https://res.cloudinary.com/${CONFIG.cloudName}/image/upload/${CONFIG.thumbQuality}/${img.public_id}.${img.format}`;
+                
+                const card = document.createElement('div');
+                card.className = "img-card";
+                card.onclick = () => openFolder(sessId); // Pag-tap, bubukas ang 4 shots
+                card.innerHTML = `<img src="${thumbUrl}">`;
+                gallery.appendChild(card);
+            });
+        })
+        .catch(err => {
+            gallery.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #666;">No photos found for ${eventId}.</p>`;
+        });
+}
+
+// 2. OPEN FOLDER (Dito lalabas ang 4 Shots + Print)
+async function openFolder(sessId) {
+    modal.style.display = "flex";
+    modalContent.innerHTML = "<div style='color:white; width:100%; text-align:center;'>Loading folder...</div>";
 
     try {
-        // Ipadala ang image sa Python Backend para i-process at i-print via Java
-        const response = await fetch('http://localhost:5000/process_shot', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ image: imageData })
-        });
+        const response = await fetch(`https://res.cloudinary.com/${CONFIG.cloudName}/image/list/${sessId}.json`);
+        const data = await response.json();
+        modalContent.innerHTML = ""; 
 
-        const result = await response.json();
-        if (result.status === "success") {
-            alert("Photo Captured! Sending to Printer...");
-        } else {
-            alert("Error: " + result.message);
-        }
-    } catch (error) {
-        console.error("Failed to connect to Python backend:", error);
-        alert("Hindi makakonekta sa Python server.");
+        // Sort para laging mauna ang Print bago ang individual shots
+        data.resources.sort((a, b) => a.public_id.localeCompare(b.public_id));
+
+        data.resources.forEach(img => {
+            const imgUrl = `https://res.cloudinary.com/${CONFIG.cloudName}/image/upload/${CONFIG.fullQuality}/${img.public_id}.${img.format}`;
+            const downloadUrl = `https://res.cloudinary.com/${CONFIG.cloudName}/image/upload/fl_attachment/${img.public_id}.${img.format}`;
+            
+            const div = document.createElement('div');
+            div.className = "folder-item";
+            div.innerHTML = `
+                <a href="${downloadUrl}" class="mini-download-btn">↓</a>
+                <img src="${imgUrl}">
+            `;
+            modalContent.appendChild(div);
+        });
+    } catch (err) {
+        modalContent.innerHTML = "<div style='color:red;'>Error loading session.</div>";
     }
 }
 
-// 3. SHARE FUNCTION
-function sharePhoto() {
-    const imageData = canvas.toDataURL('image/jpeg');
-    
-    // Check kung supported ng browser ang Web Share API
-    if (navigator.share) {
-        navigator.share({
-            title: 'My Photobooth Photo',
-            text: 'Check out my shot!',
-            url: imageData // Note: Mas maganda kung URL ito mula sa server
-        }).then(() => {
-            console.log('Successful share');
-        }).catch((error) => {
-            console.log('Error sharing', error);
-        });
-    } else {
-        alert("Share not supported on this browser. Use Download instead.");
-    }
-}
-
-// 4. DOWNLOAD FUNCTION (Nasa baba na ito sa UI)
-function downloadPhoto() {
-    const link = document.createElement('a');
-    link.download = 'photobooth_shot.jpg';
-    link.href = canvas.toDataURL('image/jpeg');
-    link.click();
+function closeModal() {
+    modal.style.display = "none";
 }
