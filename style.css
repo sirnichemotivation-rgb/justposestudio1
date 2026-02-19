@@ -1,74 +1,54 @@
-body {
-    background: #1a1a1a;
-    color: white;
-    font-family: 'Arial', sans-serif;
-    display: flex;
-    justify-content: center;
+body { background: #000; color: #fff; font-family: sans-serif; margin: 0; padding: 10px; }
+
+header h1 { 
+    text-align: center; font-size: 35px; margin: 30px 0; font-weight: 900; letter-spacing: -2px;
+}
+
+#gallery { 
+    display: grid; 
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); 
+    gap: 10px; 
+}
+
+.img-card { 
+    background: #111; border-radius: 12px; overflow: hidden; 
+    border: 1px solid #222; cursor: pointer; transition: 0.3s;
+}
+
+.img-card img { width: 100%; height: 200px; object-fit: cover; display: block; }
+
+/* MODAL FULLSCREEN */
+#photoModal {
+    display: none; position: fixed; inset: 0; background: #000; z-index: 1000;
+}
+
+#modalContent {
+    display: flex; 
+    flex-direction: row; /* Horizontal Scroll */
+    overflow-x: auto; 
+    scroll-snap-type: x mandatory; 
     height: 100vh;
-    margin: 0;
+    scrollbar-width: none;
 }
 
-.booth-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 90%;
-    max-width: 600px;
-    padding: 20px;
+.folder-item {
+    min-width: 100vw; 
+    height: 100vh; 
+    scroll-snap-align: center; 
+    display: flex; justify-content: center; align-items: center;
+    position: relative;
 }
 
-.camera-screen {
-    width: 100%;
-    height: 400px;
-    background: #000;
-    border: 4px solid #333;
-    border-radius: 15px;
-    margin-bottom: 30px;
+.folder-item img { max-width: 95%; max-height: 80%; border-radius: 8px; }
+
+.mini-download-btn {
+    position: absolute; top: 30px; right: 25px; background: #fff;
+    color: #000; width: 45px; height: 45px; border-radius: 50%;
+    display: flex; justify-content: center; align-items: center;
+    text-decoration: none; font-weight: bold; z-index: 5000;
 }
 
-.action-buttons {
-    display: flex;
-    gap: 20px;
-    width: 100%;
-}
-
-button {
-    flex: 1;
-    padding: 20px;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: 0.3s;
-}
-
-/* Single Shot & Print Button */
-#shot-print-btn {
-    background: #e74c3c;
-    color: white;
-    font-size: 1.2em;
-}
-
-#share-btn {
-    background: #3498db;
-    color: white;
-}
-
-/* Lowered Download Button */
-.footer-actions {
-    margin-top: auto; /* Itutulak nito ang section sa pinakababa */
-    padding-bottom: 40px;
-    width: 100%;
-}
-
-#download-btn {
-    background: transparent;
-    border: 1px solid #555;
-    color: #888;
-    width: 100%;
-}
-
-#download-btn:hover {
-    color: white;
-    border-color: white;
+.close-x {
+    position: absolute; top: 30px; left: 25px; font-size: 40px;
+    color: #fff; z-index: 5000; cursor: pointer;
 }
