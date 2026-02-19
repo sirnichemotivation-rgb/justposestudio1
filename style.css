@@ -1,8 +1,6 @@
-body { background: #000; color: #fff; font-family: sans-serif; margin: 0; padding: 10px; }
+body { background: #000; color: #fff; font-family: sans-serif; margin: 0; padding: 10px; overflow-x: hidden; }
 
-header h1 { 
-    text-align: center; font-size: 35px; margin: 30px 0; font-weight: 900; letter-spacing: -2px;
-}
+header h1 { text-align: center; font-size: 35px; margin: 30px 0; font-weight: 900; letter-spacing: -1px; }
 
 #gallery { 
     display: grid; 
@@ -10,11 +8,7 @@ header h1 {
     gap: 10px; 
 }
 
-.img-card { 
-    background: #111; border-radius: 12px; overflow: hidden; 
-    border: 1px solid #222; cursor: pointer; transition: 0.3s;
-}
-
+.img-card { background: #111; border-radius: 12px; overflow: hidden; border: 1px solid #222; }
 .img-card img { width: 100%; height: 200px; object-fit: cover; display: block; }
 
 /* MODAL FULLSCREEN */
@@ -24,31 +18,45 @@ header h1 {
 
 #modalContent {
     display: flex; 
-    flex-direction: row; /* Horizontal Scroll */
+    flex-direction: row; 
     overflow-x: auto; 
-    scroll-snap-type: x mandatory; 
+    scroll-snap-type: x mandatory; /* Eto yung nagpapatigil nang sakto */
+    scroll-behavior: smooth;
     height: 100vh;
-    scrollbar-width: none;
+    scrollbar-width: none; /* Hide scrollbar Firefox */
+    -webkit-overflow-scrolling: touch;
 }
+#modalContent::-webkit-scrollbar { display: none; } /* Hide scrollbar Chrome/Safari */
 
 .folder-item {
     min-width: 100vw; 
+    width: 100vw;
     height: 100vh; 
     scroll-snap-align: center; 
-    display: flex; justify-content: center; align-items: center;
+    scroll-snap-stop: always; /* Hindi lalampas sa susunod na image */
+    display: flex; 
+    justify-content: center; 
+    align-items: center;
     position: relative;
+    flex-shrink: 0;
 }
 
-.folder-item img { max-width: 95%; max-height: 80%; border-radius: 8px; }
+.folder-item img { 
+    max-width: 92%; 
+    max-height: 80%; 
+    object-fit: contain; 
+    border-radius: 8px; 
+    box-shadow: 0 0 30px rgba(255,255,255,0.1);
+}
 
 .mini-download-btn {
     position: absolute; top: 30px; right: 25px; background: #fff;
     color: #000; width: 45px; height: 45px; border-radius: 50%;
     display: flex; justify-content: center; align-items: center;
-    text-decoration: none; font-weight: bold; z-index: 5000;
+    text-decoration: none; font-weight: bold; z-index: 5000; font-size: 20px;
 }
 
 .close-x {
     position: absolute; top: 30px; left: 25px; font-size: 40px;
-    color: #fff; z-index: 5000; cursor: pointer;
+    color: #fff; z-index: 5000; cursor: pointer; font-weight: bold;
 }
