@@ -1,0 +1,38 @@
+body { background: #000; color: #fff; font-family: sans-serif; margin: 0; padding: 10px; }
+
+header h1 { 
+    text-align: center; font-size: 50px; margin-top: 40px; font-weight: 900; 
+}
+
+#gallery { 
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; 
+}
+
+.img-card { background: #111; border-radius: 10px; overflow: hidden; border: 1px solid #222; }
+.img-card img { width: 100%; display: block; }
+
+/* MODAL / FOLDER VIEW */
+#photoModal {
+    display: none; position: fixed; inset: 0; background: #000; z-index: 1000; flex-direction: column;
+}
+
+#modalContent {
+    display: flex; flex-direction: row; overflow-x: auto; scroll-snap-type: x mandatory; 
+    height: 100%; align-items: center; gap: 0; scrollbar-width: none;
+}
+#modalContent::-webkit-scrollbar { display: none; }
+
+.folder-item {
+    min-width: 100vw; height: 85vh; scroll-snap-align: center; position: relative;
+    display: flex; justify-content: center; align-items: center;
+}
+
+.folder-item img { max-width: 95%; max-height: 100%; object-fit: contain; border-radius: 10px; }
+
+.mini-download-btn {
+    position: absolute; top: 10px; right: 20px; background: rgba(255,255,255,0.2);
+    backdrop-filter: blur(5px); color: #fff; width: 35px; height: 35px; border-radius: 50%;
+    display: flex; justify-content: center; align-items: center; text-decoration: none; font-weight: bold;
+}
+
+.close-x { position: absolute; top: 10px; left: 20px; font-size: 24px; color: #fff; cursor: pointer; z-index: 2000; }
