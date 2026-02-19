@@ -1,86 +1,38 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Justpose Gallery</title>
+    <title>AI Photobooth v2.0</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-    <header><h1>JUSTPOSE GALLERY</h1></header>
-    <div id="gallery"></div>
 
-    <div id="photoModal">
-        <div class="close-x" onclick="closeModal()">×</div>
-        <div id="modalContent"></div>
+    <div class="booth-container">
+        <div class="camera-screen">
+            <video id="video" autoplay></video>
+            <canvas id="canvas" style="display:none;"></canvas>
+        </div>
+
+        <div class="action-buttons">
+            <button id="shot-print-btn" onclick="captureAndPrint()">
+                <i class="fas fa-camera"></i>
+                <span>SINGLE SHOT & PRINT</span>
+            </button>
+            
+            <button id="share-btn" onclick="sharePhoto()">
+                <i class="fas fa-share-nodes"></i>
+                <span>SHARE</span>
+            </button>
+        </div>
+
+        <div class="footer-actions">
+            <button id="download-btn" onclick="downloadPhoto()">
+                <i class="fas fa-cloud-download-alt"></i> Download Image
+            </button>
+        </div>
     </div>
 
-    <script>
-        const cloudName = "dntrwkexp";
-        const urlParams = new URLSearchParams(window.location.search);
-        const eventId = urlParams.get('event');
-
-        // 1. Load Main Prints
-        if (eventId) {
-            fetch(`https://res.cloudinary.com/${cloudName}/image/list/${eventId}.json`)
-                .then(r => r.json()).then(data => {
-                    const gal = document.getElementById('gallery');
-                    // Sort by latest
-                    data.resources.sort((a,b) => new Date(b.created_at) - new Date(a.created_at));
-                    
-                    data.resources.forEach(img => {
-                        // Extract Session ID from path (Events/EventID/SESS_ID/1_Print)
-                        const pathParts = img.public_id.split('/');
-                        const sessId = pathParts[pathParts.length - 2]; 
-
-                        const card = document.createElement('div');
-                        card.className = "img-card"; 
-                        card.onclick = () => openFolder(sessId);
-                        card.innerHTML = `<img src="https://res.cloudinary.com/${cloudName}/image/upload/c_thumb,w_400/v${img.version}/${img.public_id}.${img.format}">`;
-                        gal.appendChild(card);
-                    });
-                }).catch(err => {
-                    document.getElementById('gallery').innerHTML = "<p style='text-align:center;'>No photos yet.</p>";
-                });
-        }
-
-        // 2. Open Folder (Dito lalabas lahat ng Single Shots + Print)
-        async function openFolder(sessId) {
-            const modal = document.getElementById('photoModal');
-            const cont = document.getElementById('modalContent');
-            modal.style.display = "flex"; 
-            cont.innerHTML = "<div style='color:white; width:100vw; text-align:center;'>Loading Session...</div>";
-
-            try {
-                // Hinihingi natin lahat ng image na may tag ng Session ID
-                const r = await fetch(`https://res.cloudinary.com/${cloudName}/image/list/${sessId}.json`);
-                const data = await r.json();
-                cont.innerHTML = "";
-                
-                // FILTER: Tanggalin ang mga resize files (_3600 etc)
-                const cleanFiles = data.resources.filter(i => !i.public_id.match(/_\d+$/));
-                
-                // SORT: Para 1_Print ang laging una sa scroll
-                cleanFiles.sort((a,b) => a.public_id.localeCompare(b.public_id));
-
-                cleanFiles.forEach(i => {
-                    const div = document.createElement('div'); 
-                    div.className = "folder-item";
-                    const fullUrl = `https://res.cloudinary.com/${cloudName}/image/upload/v${i.version}/${i.public_id}.${i.format}`;
-                    const dlUrl = `https://res.cloudinary.com/${cloudName}/image/upload/fl_attachment/v${i.version}/${i.public_id}.${i.format}`;
-                    
-                    div.innerHTML = `
-                        <a href="${dlUrl}" class="mini-download-btn">↓</a>
-                        <img src="${fullUrl}">
-                    `;
-                    cont.appendChild(div);
-                });
-            } catch (err) {
-                cont.innerHTML = "<div style='color:red; width:100vw; text-align:center;'>Error loading folder.</div>";
-            }
-        }
-
-        function closeModal() { document.getElementById('photoModal').style.display = "none"; }
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
