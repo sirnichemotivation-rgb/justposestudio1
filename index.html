@@ -1,36 +1,19 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
     <meta charset="UTF-8">
-    <title>AI Photobooth v2.0</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Justpose Gallery</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
+    <header><h1 id="mainTitle">JUSTPOSE GALLERY</h1></header>
+    
+    <div id="gallery"></div>
 
-    <div class="booth-container">
-        <div class="camera-screen">
-            <video id="video" autoplay></video>
-            <canvas id="canvas" style="display:none;"></canvas>
-        </div>
-
-        <div class="action-buttons">
-            <button id="shot-print-btn" onclick="captureAndPrint()">
-                <i class="fas fa-camera"></i>
-                <span>SINGLE SHOT & PRINT</span>
-            </button>
-            
-            <button id="share-btn" onclick="sharePhoto()">
-                <i class="fas fa-share-nodes"></i>
-                <span>SHARE</span>
-            </button>
-        </div>
-
-        <div class="footer-actions">
-            <button id="download-btn" onclick="downloadPhoto()">
-                <i class="fas fa-cloud-download-alt"></i> Download Image
-            </button>
-        </div>
+    <div id="photoModal">
+        <div class="close-x" onclick="closeModal()">×</div>
+        <div id="modalContent"></div>
     </div>
 
     <script src="script.js"></script>
