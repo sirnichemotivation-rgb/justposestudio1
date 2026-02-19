@@ -5,7 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Justpose Gallery</title>
     <style>
-        /* Modern Dark Theme */
+        /* --- CONFIGURATION PARA SA DESIGN --- */
+        :root {
+            --title-size: 45px;      /* Lakihan mo dito */
+            --title-margin: 30px;    /* Baba mula sa itaas */
+            --accent-color: #ffffff;
+        }
+
         body { 
             background-color: #0a0a0a; 
             color: #ffffff; 
@@ -13,74 +19,95 @@
             margin: 0; padding: 15px;
             overflow-x: hidden;
         }
-        header { text-align: center; padding: 20px 0; border-bottom: 1px solid #222; margin-bottom: 20px; }
-        header h1 { margin: 0; font-size: 1.2rem; letter-spacing: 2px; color: #fff; }
+
+        header { 
+            text-align: center; 
+            padding: var(--title-margin) 0 20px 0; 
+            border-bottom: 1px solid #222; 
+            margin-bottom: 20px; 
+        }
+
+        header h1 { 
+            margin: 0; 
+            font-size: var(--title-size); 
+            letter-spacing: -1px; 
+            font-weight: 900;
+            color: #fff; 
+            text-transform: uppercase;
+        }
         
-        /* Grid Layout */
+        /* Main Gallery Grid */
         #gallery { 
             display: grid; 
-            grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); 
-            gap: 10px; 
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); 
+            gap: 12px; 
         }
         
         .img-card { 
             background: #1a1a1a; 
-            border-radius: 8px; 
+            border-radius: 12px; 
             overflow: hidden; 
             cursor: pointer;
-            transition: transform 0.2s;
+            border: 1px solid #222;
         }
-        .img-card:active { transform: scale(0.95); }
-        .img-card img { width: 100%; height: 150px; object-fit: cover; display: block; }
 
-        /* Modal Style */
+        .img-card img { width: 100%; height: auto; display: block; }
+        .session-tag { font-size: 10px; color: #555; text-align: center; padding: 8px; font-weight: bold; }
+
+        /* Modal / Folder View - Inayos para maging scrollable scrollable */
         #photoModal {
             display: none;
             position: fixed;
             z-index: 1000;
             top: 0; left: 0;
             width: 100%; height: 100%;
-            background: rgba(0,0,0,0.95);
+            background: rgba(0,0,0,0.98);
             flex-direction: column;
-            justify-content: center;
-            align-items: center;
-        }
-        #modalImg { 
-            max-width: 90%; 
-            max-height: 65%; 
-            border-radius: 10px; 
-            box-shadow: 0 0 30px rgba(255,255,255,0.1); 
-            object-fit: contain;
-        }
-        
-        /* Controls Group */
-        .modal-controls { 
-            margin-top: 25px; 
-            display: flex; 
-            flex-direction: column;
-            gap: 12px; 
-            width: 80%; 
-            max-width: 300px;
-        }
-        
-        .btn {
-            padding: 14px;
-            border-radius: 50px;
-            text-decoration: none;
-            font-weight: bold;
-            text-align: center;
-            font-size: 0.9rem;
-            border: none;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
         }
 
-        .download-btn { background: #ffffff; color: #000; }
-        .share-btn { background: #333; color: #fff; border: 1px solid #444; }
-        .close-btn { margin-top: 15px; color: #888; background: none; border: none; font-size: 0.9rem; }
+        /* Container ng mga images sa loob ng folder */
+        #modalContent {
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+            flex-grow: 1;
+        }
+
+        .folder-item { width: 100%; max-width: 500px; text-align: center; }
+        .folder-item img { 
+            width: 100%; 
+            border-radius: 15px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5); 
+        }
+
+        .modal-header {
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #111;
+            border-bottom: 1px solid #222;
+        }
+
+        .btn-download {
+            display: block;
+            margin-top: 10px;
+            background: var(--accent-color);
+            color: #000;
+            padding: 15px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .close-btn { 
+            background: #333; color: #fff; border: none; 
+            padding: 10px 20px; border-radius: 50px; font-weight: bold;
+        }
 
         .msg { grid-column: 1 / -1; text-align: center; padding: 50px; color: #555; }
     </style>
@@ -88,27 +115,101 @@
 <body>
 
     <header>
-        <h1>JUSTPOSE GALLERY</h1>
+        <h1 id="mainTitle">JUSTPOSE GALLERY</h1>
     </header>
     
     <div id="gallery">
-        <div class="msg">Loading photos...</div>
+        <div class="msg">Loading gallery...</div>
     </div>
 
     <div id="photoModal">
-        <img id="modalImg" src="" alt="Full View">
-        
-        <div class="modal-controls">
-            <a id="downloadLink" href="#" class="btn download-btn">
-                <span>⬇️</span> DOWNLOAD PHOTO
-            </a>
-            <button id="shareBtn" class="btn share-btn">
-                <span>📤</span> SHARE PHOTO
-            </button>
-            <button class="close-btn" onclick="closeModal()">Close Preview</button>
+        <div class="modal-header">
+            <button class="close-btn" onclick="closeModal()">← BACK</button>
+            <span style="font-size: 12px; color: #555;">VIEWING SESSION</span>
         </div>
+        
+        <div id="modalContent">
+            </div>
     </div>
 
-    <script src="script.js"></script>
+    <script>
+        const cloudName = "dntrwkexp"; 
+        const urlParams = new URLSearchParams(window.location.search);
+        const eventId = urlParams.get('event');
+
+        const gallery = document.getElementById('gallery');
+        const modal = document.getElementById('photoModal');
+        const modalContent = document.getElementById('modalContent');
+
+        if (eventId) {
+            loadGallery();
+        } else {
+            gallery.innerHTML = `<div class="msg">No event ID found.</div>`;
+        }
+
+        // 1. Load Main Gallery (Prints Only)
+        function loadGallery() {
+            fetch(`https://res.cloudinary.com/${cloudName}/image/list/${eventId}.json`)
+                .then(res => res.json())
+                .then(data => {
+                    gallery.innerHTML = "";
+                    data.resources.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+
+                    data.resources.forEach(img => {
+                        // Kunin ang Session ID mula sa path
+                        const parts = img.public_id.split('/');
+                        const sessId = parts[parts.length - 2]; 
+
+                        const thumbUrl = `https://res.cloudinary.com/${cloudName}/image/upload/q_auto,f_auto,w_500/${img.public_id}.${img.format}`;
+                        
+                        const card = document.createElement('div');
+                        card.className = "img-card";
+                        card.onclick = () => openFolder(sessId);
+                        card.innerHTML = `
+                            <img src="${thumbUrl}">
+                            <div class="session-tag">OPEN SESSION</div>
+                        `;
+                        gallery.appendChild(card);
+                    });
+                })
+                .catch(() => {
+                    gallery.innerHTML = `<div class="msg">Gallery is empty. Start posing!</div>`;
+                });
+        }
+
+        // 2. Open Folder (Lalabas lahat ng pics sa Session)
+        async function openFolder(sessId) {
+            modal.style.display = "flex";
+            modalContent.innerHTML = "<div class='msg'>Opening folder...</div>";
+
+            try {
+                const res = await fetch(`https://res.cloudinary.com/${cloudName}/image/list/${sessId}.json`);
+                const data = await res.json();
+                modalContent.innerHTML = ""; 
+
+                // Sort: Para mauna ang 1_Print
+                data.resources.sort((a, b) => a.public_id.localeCompare(b.public_id));
+
+                data.resources.forEach(img => {
+                    const fullUrl = `https://res.cloudinary.com/${cloudName}/image/upload/q_auto,f_auto/${img.public_id}.${img.format}`;
+                    const dlUrl = `https://res.cloudinary.com/${cloudName}/image/upload/fl_attachment/${img.public_id}.${img.format}`;
+                    
+                    const item = document.createElement('div');
+                    item.className = "folder-item";
+                    item.innerHTML = `
+                        <img src="${fullUrl}">
+                        <a href="${dlUrl}" class="btn-download">DOWNLOAD PHOTO</a>
+                    `;
+                    modalContent.appendChild(item);
+                });
+            } catch (err) {
+                modalContent.innerHTML = "<div class='msg'>Error loading session.</div>";
+            }
+        }
+
+        function closeModal() {
+            modal.style.display = "none";
+        }
+    </script>
 </body>
 </html>
