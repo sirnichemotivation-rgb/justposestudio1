@@ -1,61 +1,74 @@
-body { background: #000; color: #fff; font-family: sans-serif; margin: 0; padding: 10px; }
-
-header h1 { 
-    text-align: center; font-size: 50px; margin-top: 40px; font-weight: 900; 
+body {
+    background: #1a1a1a;
+    color: white;
+    font-family: 'Arial', sans-serif;
+    display: flex;
+    justify-content: center;
+    height: 100vh;
+    margin: 0;
 }
 
-#gallery { 
-    display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; 
-}
-
-.img-card { background: #111; border-radius: 10px; overflow: hidden; border: 1px solid #222; cursor: pointer; }
-.img-card img { width: 100%; height: 180px; object-fit: cover; display: block; }
-
-/* MODAL / FOLDER VIEW */
-#photoModal {
-    display: none; position: fixed; inset: 0; background: #000; z-index: 1000; flex-direction: column;
-}
-
-/* ITO ANG PARA SA LEFT TO RIGHT SCROLL */
-#modalContent {
-    display: flex; 
-    flex-direction: row; /* Force horizontal */
-    overflow-x: auto; 
-    overflow-y: hidden;
-    scroll-snap-type: x mandatory; 
-    height: 100vh; 
-    align-items: center; 
-    scrollbar-width: none;
-}
-#modalContent::-webkit-scrollbar { display: none; }
-
-.folder-item {
-    min-width: 100vw; /* One photo per screen width */
-    height: 100vh; 
-    scroll-snap-align: center; 
-    position: relative;
-    display: flex; 
-    justify-content: center; 
+.booth-container {
+    display: flex;
+    flex-direction: column;
     align-items: center;
+    width: 90%;
+    max-width: 600px;
+    padding: 20px;
 }
 
-.folder-item img { 
-    max-width: 95%; 
-    max-height: 85%; 
-    object-fit: contain; 
-    border-radius: 10px; 
+.camera-screen {
+    width: 100%;
+    height: 400px;
+    background: #000;
+    border: 4px solid #333;
+    border-radius: 15px;
+    margin-bottom: 30px;
 }
 
-.mini-download-btn {
-    position: absolute; top: 20px; right: 20px; background: rgba(255,255,255,0.3);
-    backdrop-filter: blur(5px); color: #fff; width: 45px; height: 45px; border-radius: 50%;
-    display: flex; justify-content: center; align-items: center; 
-    text-decoration: none; font-weight: bold; font-size: 20px; z-index: 2000;
+.action-buttons {
+    display: flex;
+    gap: 20px;
+    width: 100%;
 }
 
-.close-x { 
-    position: absolute; top: 20px; left: 20px; font-size: 30px; 
-    color: #fff; cursor: pointer; z-index: 3000; font-weight: bold;
-    background: rgba(0,0,0,0.5); width: 40px; height: 40px; 
-    display: flex; justify-content: center; align-items: center; border-radius: 50%;
+button {
+    flex: 1;
+    padding: 20px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+/* Single Shot & Print Button */
+#shot-print-btn {
+    background: #e74c3c;
+    color: white;
+    font-size: 1.2em;
+}
+
+#share-btn {
+    background: #3498db;
+    color: white;
+}
+
+/* Lowered Download Button */
+.footer-actions {
+    margin-top: auto; /* Itutulak nito ang section sa pinakababa */
+    padding-bottom: 40px;
+    width: 100%;
+}
+
+#download-btn {
+    background: transparent;
+    border: 1px solid #555;
+    color: #888;
+    width: 100%;
+}
+
+#download-btn:hover {
+    color: white;
+    border-color: white;
 }
